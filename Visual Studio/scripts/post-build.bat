@@ -13,6 +13,7 @@ mkdir %dest%
 
 :: Copy Engine dependencies
 xcopy /Y /D /S %libs%\GL\%target%\Release\*.dll %dest%
+xcopy /Y /D /S %libs%\freetype\%target%\*.dll %dest%
 xcopy /Y /D /S %libs%\GLFW\%target%\%configuration%\*.dll %dest%
 xcopy /Y /D /S %libs%\assimp\%target%\%configuration%\*.dll %dest%
 xcopy /Y /D /S %libs%\Engine\%target%\%configuration%\*.dll %dest%
