@@ -5,6 +5,8 @@
 #include <include/gl.h>
 #include <include/glm.h>
 
+class InputController;
+
 class WindowProperties
 {
 	public:
@@ -30,9 +32,6 @@ class WindowProperties
 
 class WindowObject
 {
-	friend class InputController;
-	friend class WindowCallbacks;
-
 	public:
 		WindowObject(WindowProperties properties);
 		~WindowObject();
@@ -76,14 +75,6 @@ class WindowObject
 		// Update event listeners (key press / mouse move / window events)
 		void UpdateObservers();
 
-	protected:
-		// Frame time
-		void ComputeFrameTime();
-		
-		// Window Creation
-		void FullScreen();
-		void WindowMode();
-
 		// Input Processing
 		void KeyCallback(int key, int scanCode, int action, int mods);
 		void MouseButtonCallback(int button, int action, int mods);
@@ -91,8 +82,16 @@ class WindowObject
 		void MouseScroll(double offsetX, double offsetY);
 
 		// Subscribe to receive input events
-		void SubscribeToEvents(InputController * IC);
-		void UnsubscribeFromEvents(InputController * IC);
+		void SubscribeToEvents(InputController* IC);
+		void UnsubscribeFromEvents(InputController* IC);
+
+	protected:
+		// Frame time
+		void ComputeFrameTime();
+		
+		// Window Creation
+		void FullScreen();
+		void WindowMode();
 
 	private:
 		void SetWindowCallbacks();

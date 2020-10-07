@@ -12,7 +12,7 @@ set dest="%fileDirectory%..\..\%target%\%configuration%"
 mkdir %dest%
 
 :: Copy Engine dependencies
-xcopy /Y /D /S %libs%\GL\%target%\Release\*.dll %dest%
-xcopy /Y /D /S %libs%\GLFW\%target%\%configuration%\*.dll %dest%
-xcopy /Y /D /S %libs%\assimp\%target%\%configuration%\*.dll %dest%
-xcopy /Y /D /S %libs%\Engine\%target%\%configuration%\*.dll %dest%
+xcopy /Y /D /S %libs%\GLEW\%target%\Win\*.dll %dest%
+xcopy /Y /D /S %libs%\GLFW\%target%\Win\*.dll %dest%
+xcopy /Y /D /S %libs%\assimp\%target%\Win\*.dll %dest%
+xcopy /Y /D /S %libs%\Engine\%target%\Win\%configuration%\*.dll %dest%

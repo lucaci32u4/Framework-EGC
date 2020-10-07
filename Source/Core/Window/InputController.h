@@ -4,8 +4,6 @@
 
 class InputController
 {
-	friend class WindowObject;
-
 	public:
 		InputController();
 		virtual ~InputController();
@@ -13,7 +11,6 @@ class InputController
 		bool IsActive() const;
 		void SetActive(bool value);
 
-	protected:
 		// Method will be called each frame before the Update() method
 		// Use for real-time frame-independent interaction such as performing continuous updates when pressing a key
 		// @param deltaTime - frame time in seconds for the previous frame, may be used for frame time independent updates
