@@ -1,9 +1,24 @@
 #pragma once
 
 #include <Component/SimpleScene.h>
+#include <vector>
 
 class Laborator1 : public SimpleScene
 {
+    private:
+        float currentTime = 0;
+        float vibrationAccumulator = 0;
+
+        std::unordered_map<int, glm::vec3> shifters;
+        std::vector<int> keys;
+        std::vector<std::string> objects;
+
+        float clearGradient = 0;
+        uint8_t clearColor = 0;
+
+        int currentMeshIndex = 0;
+
+        glm::vec3 objPositionModifier = glm::vec3(0);
 	public:
 		Laborator1();
 		~Laborator1();
