@@ -21,3 +21,6 @@
 !/CMakeLists.txt
 !/fedora-dep.sh
 !/ubuntu-dependencies.sh
+
+# upload scripts
+!/make-zip.sh
