@@ -32,39 +32,102 @@ void Laborator2::Init()
 	{
 		vector<VertexFormat> vertices
 		{
-			VertexFormat(glm::vec3(-1, -1,  1), glm::vec3(0, 1, 1)),
-			// TODO: Complete the information for the cube
+			VertexFormat(glm::vec3(-1, -1,  -1), glm::vec3(0, 0, 1)),
+            VertexFormat(glm::vec3(1, -1,  -1), glm::vec3(0, 0, 1)),
+            VertexFormat(glm::vec3(-1, 1,  -1), glm::vec3(0, 1, 0)),
+            VertexFormat(glm::vec3(1, 1,  -1), glm::vec3(1, 0, 0)),
+            VertexFormat(glm::vec3(-1, -1,  1), glm::vec3(0, 0, 1)),
+            VertexFormat(glm::vec3(1, -1,  1), glm::vec3(0, 1, 0)),
+            VertexFormat(glm::vec3(-1, 1,  1), glm::vec3(1, 0, 0)),
+            VertexFormat(glm::vec3(1, 1,  1), glm::vec3(1, 0, 0)),
 		};
 
 		vector<unsigned short> indices =
 		{
-			0, 1, 2,	// indices for first triangle
-			1, 3, 2,	// indices for second triangle
-			// TODO: Complete indices data
+			0, 1, 2,
+			1, 3, 2,
+			5, 4, 6,
+			5, 6, 7,
+			2, 3, 7,
+			7, 6, 2,
+			5, 1, 0,
+			0, 4, 5,
+			1, 5, 7,
+			1, 7, 3,
+			0, 2, 6,
+			0, 6, 4,
 		};
 
-		meshes["cube1"] = new Mesh("generated cube 1");
+		meshes["cube1"] = new Mesh("cube1");
 		meshes["cube1"]->InitFromData(vertices, indices);
 
 		// Create a new mesh from buffer data
 		Mesh *cube = CreateMesh("cube3", vertices, indices);
 	}
+
+    {
+        vector<VertexFormat> vertices
+                {
+                        VertexFormat(glm::vec3(-2, 0,  0), glm::vec3(1, 0, 0)),
+                        VertexFormat(glm::vec3(2, 0,  0), glm::vec3(0, 0, 1)),
+                        VertexFormat(glm::vec3(0, 0,  4), glm::vec3(0, 1, 0)),
+                        VertexFormat(glm::vec3(0, 3,  2), glm::vec3(0.5, 0.5, 0.5)),
+
+                };
+
+        vector<unsigned short> indices =
+                {
+                        2, 1, 0,
+                        0, 1, 3,
+                        0, 3, 2,
+                        2, 3, 1,
+                };
+
+        meshes["teth1"] = new Mesh("teth1");
+        meshes["teth1"]->InitFromData(vertices, indices);
+
+        // Create a new mesh from buffer data
+        Mesh *cube = CreateMesh("cube3", vertices, indices);
+    }
+
+    {
+        vector<VertexFormat> vertices
+                {
+                        VertexFormat(glm::vec3(-2, 0,  -2), glm::vec3(1, 0, 0)),
+                        VertexFormat(glm::vec3(2, 0,  2), glm::vec3(0, 0, 1)),
+                        VertexFormat(glm::vec3(-2, 0,  2), glm::vec3(0, 1, 0)),
+                        VertexFormat(glm::vec3(2, 0,  2), glm::vec3(0.5, 0.5, 0.5)),
+                };
+
+        vector<unsigned short> indices =
+                {
+                        0, 1, 2,
+                        1, 2, 3,
+                };
+
+        meshes["trig"] = new Mesh("trig");
+        meshes["trig"]->InitFromData(vertices, indices);
+
+        // Create a new mesh from buffer data
+        Mesh *cube = CreateMesh("cube3", vertices, indices);
+    }
 }
 
 Mesh* Laborator2::CreateMesh(const char *name, const std::vector<VertexFormat> &vertices, const std::vector<unsigned short> &indices)
 {
 	unsigned int VAO = 0;
-	// TODO: Create the VAO and bind it
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 
-	// TODO: Create the VBO and bind it
 	unsigned int VBO = 0;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(VertexFormat) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-	// TODO: Send vertices data into the VBO buffer
-
-	// TODO: Crete the IBO and bind it
-	unsigned int IBO = 0;
-
-	// TODO: Send indices data into the IBO buffer
+    unsigned int IBO = 0;
+	glGenBuffers(1, &IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
 	// ========================================================================
 	// This section describes how the GPU Shader Vertex Shader program receives data
@@ -90,6 +153,7 @@ Mesh* Laborator2::CreateMesh(const char *name, const std::vector<VertexFormat> &
 	// ========================================================================
 
 	// TODO: Unbind the VAO
+	glBindVertexArray(0);
 
 	// Check for OpenGL errors
 	CheckOpenGLError();
@@ -118,9 +182,10 @@ void Laborator2::Update(float deltaTimeSeconds)
 	glPointSize(5);
 	glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 
-	// TODO: Enable face culling
+	glEnable(GL_CULL_FACE);
 
 	// TODO: Set face custom culling. Use the "cullFace" variable
+    glCullFace(cullFace);
 
 	// render an object using face normals for color
 	RenderMesh(meshes["box"], shaders["VertexNormal"], glm::vec3(0, 0.5f, -1.5f), glm::vec3(0.75f));
@@ -128,7 +193,11 @@ void Laborator2::Update(float deltaTimeSeconds)
 	// render an object using colors from vertex
 	RenderMesh(meshes["cube1"], shaders["VertexColor"], glm::vec3(-1.5f, 0.5f, 0), glm::vec3(0.25f));
 
-	// TODO: Disable face culling
+    RenderMesh(meshes["teth1"], shaders["VertexColor"], glm::vec3(+1.5f, 0.5f, 0), glm::vec3(0.25f));
+
+    RenderMesh(meshes["trig"], shaders["VertexColor"], glm::vec3(+0.4f, 0.9f, 0), glm::vec3(0.25f));
+
+	glDisable(GL_CULL_FACE);
 }
 
 void Laborator2::FrameEnd()
@@ -160,6 +229,10 @@ void Laborator2::OnKeyPress(int key, int mods)
 			polygonMode = GL_LINE;
 			break;
 		}
+	}
+	if (key == GLFW_KEY_F2) {
+	    if (cullFace == GL_BACK) cullFace = GL_FRONT;
+	    else cullFace = GL_BACK;
 	}
 }
 
