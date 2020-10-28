@@ -35,6 +35,13 @@ void Laborator3_Vis2D::Init()
 
 	Mesh* square1 = Object2D::CreateSquare("square1", corner, length, glm::vec3(1, 0, 0));
 	AddMeshToList(square1);
+
+    shifters[GLFW_KEY_W] = glm::vec3(+800, 0, 0);
+    shifters[GLFW_KEY_S] = - shifters[GLFW_KEY_W];
+    shifters[GLFW_KEY_A] = glm::vec3(0, -800, 0);
+    shifters[GLFW_KEY_D] = - shifters[GLFW_KEY_A];
+    shifters[GLFW_KEY_Z] = glm::vec3(0, 0, -1);
+    shifters[GLFW_KEY_X] = - shifters[GLFW_KEY_Z];
 }
 
 // 2D visualization matrix
@@ -98,6 +105,10 @@ void Laborator3_Vis2D::FrameStart()
 void Laborator3_Vis2D::Update(float deltaTimeSeconds)
 {
 
+    std::for_each(keys.begin(), keys.end(), [&](int k){
+        keysAccumulator += (deltaTimeSeconds * 0.4f) * shifters[k];
+    });
+
 	glm::ivec2 resolution = window->GetResolution();
 
 	// Sets the screen area where to draw - the left half of the window
@@ -106,6 +117,8 @@ void Laborator3_Vis2D::Update(float deltaTimeSeconds)
 	
 	// Compute the 2D visualization matrix
 	visMatrix = glm::mat3(1);
+	visMatrix *= Transform2D::Scale(keysAccumulator[2], keysAccumulator[2]);
+	visMatrix *= Transform2D::Translate(keysAccumulator[1], keysAccumulator[0]);
 	visMatrix *= VisualizationTransf2D(logicSpace, viewSpace);
 
 	DrawScene(visMatrix);
@@ -152,12 +165,16 @@ void Laborator3_Vis2D::OnInputUpdate(float deltaTime, int mods)
 
 void Laborator3_Vis2D::OnKeyPress(int key, int mods)
 {
-
+    if (shifters.find(key) != shifters.end()) {
+        keys.emplace_back(key);
+    }
 }
 
 void Laborator3_Vis2D::OnKeyRelease(int key, int mods)
 {
-	// add key release event
+    if (shifters.find(key) != shifters.end()) {
+        keys.erase(std::remove(keys.begin(), keys.end(), key), keys.end());
+    }
 }
 
 void Laborator3_Vis2D::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)

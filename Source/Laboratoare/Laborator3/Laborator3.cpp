@@ -70,21 +70,27 @@ void Laborator3::FrameStart()
 void Laborator3::Update(float deltaTimeSeconds)
 {
 	// TODO: update steps for translation, rotation, scale, in order to create animations
-	
+
+	double animSpeed = 20;
+	time += deltaTimeSeconds * animSpeed;
+	float s = sin(time);
+	float c = cos(time);
+
 	modelMatrix = glm::mat3(1);
 	modelMatrix *= Transform2D::Translate(150, 250);
-	// TODO: create animations by multiplying current transform matrix with matrices from Transform 2D
-
+	modelMatrix *= Transform2D::Scale(Transform2D::variator(0.7f, s), Transform2D::variator(0.7f, c));
 	RenderMesh2D(meshes["square1"], shaders["VertexColor"], modelMatrix);
 
 	modelMatrix = glm::mat3(1);
 	modelMatrix *= Transform2D::Translate(400, 250);
-	//TODO create animations by multiplying current transform matrix with matrices from Transform 2D
-	
+    modelMatrix *= Transform2D::Rotate(time / 5);
+    modelMatrix *= Transform2D::Translate(-50, -50);
 	RenderMesh2D(meshes["square2"], shaders["VertexColor"], modelMatrix);
 
 	modelMatrix = glm::mat3(1);
-	modelMatrix *= Transform2D::Translate(650, 250);
+    modelMatrix *= Transform2D::Translate(650, 250);
+    modelMatrix *= Transform2D::Rotate(time / 5);
+    modelMatrix *= Transform2D::Scale(Transform2D::variator(0.7f, s), Transform2D::variator(0.7f, c));
 
 	//TODO create animations by multiplying current transform matrix with matrices from Transform 2D
 	RenderMesh2D(meshes["square3"], shaders["VertexColor"], modelMatrix);

@@ -36,6 +36,11 @@ class Laborator3_Vis2D : public SimpleScene
 		void Init() override;
 
 	private:
+
+        std::unordered_map<int, glm::vec3> shifters;
+        std::vector<int> keys;
+        glm::vec3 keysAccumulator = glm::vec3(0, 0, 1);
+
 		void FrameStart() override;
 		void Update(float deltaTimeSeconds) override;
 		void FrameEnd() override;

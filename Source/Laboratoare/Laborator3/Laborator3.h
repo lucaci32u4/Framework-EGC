@@ -13,6 +13,9 @@ class Laborator3 : public SimpleScene
 		void Init() override;
 
 	private:
+
+        double time;
+
 		void FrameStart() override;
 		void Update(float deltaTimeSeconds) override;
 		void FrameEnd() override;
