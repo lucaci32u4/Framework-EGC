@@ -59,6 +59,8 @@ void Laborator4::FrameStart()
 
 void Laborator4::Update(float deltaTimeSeconds)
 {
+    time += deltaTimeSeconds;
+
 	glLineWidth(3);
 	glPointSize(5);
 	glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
@@ -79,6 +81,30 @@ void Laborator4::Update(float deltaTimeSeconds)
 	modelMatrix *= Transform3D::RotateOY(keysAccumulator[2].y);
 	modelMatrix *= Transform3D::RotateOZ(keysAccumulator[2].z);
 	RenderMesh(meshes["box"], shaders["VertexNormal"], modelMatrix);
+
+	modelMatrix = glm::mat4(1);
+	modelMatrix *= Transform3D::Translate(time + 0.5, abs(sin(time * 3.141)) + 0.5, 1.5);
+	modelMatrix *= Transform3D::RotateOZ(-time * 3.141);
+    RenderMesh(meshes["box"], shaders["VertexNormal"], modelMatrix);
+
+    glm::mat4 sun = glm::mat4(1);
+    sun *= Transform3D::Translate(0, 2.5, -1.5);
+    RenderMesh(meshes["box"], shaders["VertexNormal"], sun);
+
+    glm::mat4 earth = sun;
+    earth *= Transform3D::RotateOY(time);
+    earth *= Transform3D::Translate(0, 0, -5);
+    glm::mat4 moon = earth;
+    earth *= Transform3D::RotateOX(sin(time) * 0.4); // inclinare
+    earth *= Transform3D::RotateOY(time * 10); // rotatie proprie
+    RenderMesh(meshes["box"], shaders["VertexNormal"], earth);
+
+    moon *= Transform3D::RotateOY(time * 8);
+    moon *= Transform3D::Translate(0, 0, -2);
+    moon *= Transform3D::Scale(0.3, 0.3, 0.3);
+    moon *= Transform3D::RotateOY(-time * 4);
+    RenderMesh(meshes["box"], shaders["VertexNormal"], moon);
+
 }
 
 void Laborator4::FrameEnd() {

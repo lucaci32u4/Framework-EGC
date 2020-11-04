@@ -22,6 +22,8 @@ class Laborator4 : public SimpleScene
                 0, 0, 0  // rotate cube 3
                 );
 
+        float time;
+
 		void FrameStart() override;
 		void Update(float deltaTimeSeconds) override;
 		void FrameEnd() override;
