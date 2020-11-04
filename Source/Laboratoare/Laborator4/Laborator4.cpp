@@ -2,10 +2,10 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
 
 #include <Core/Engine.h>
 #include "Transform3D.h"
+#include <numeric>
 
 using namespace std;
 
@@ -25,20 +25,25 @@ void Laborator4::Init()
 	mesh->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "box.obj");
 	meshes[mesh->GetMeshID()] = mesh;
 
-	// initialize tx, ty and tz (the translation steps)
-	translateX = 0;
-	translateY = 0;
-	translateZ = 0;
+	float move = 3;
+	float scale = 0.6;
+	float rotate = 4;
 
-	// initialize sx, sy and sz (the scale factors)
-	scaleX = 1;
-	scaleY = 1;
-	scaleZ = 1;
-	
-	// initialize angularSteps
-	angularStepOX = 0;
-	angularStepOY = 0;
-	angularStepOZ = 0;
+	shifters[GLFW_KEY_W] = glm::mat3(0, 0, -move, 0, 0, 0, 0, 0, 0);
+	shifters[GLFW_KEY_A] = glm::mat3(-move, 0, 0, 0, 0, 0, 0, 0, 0);
+    shifters[GLFW_KEY_R] = glm::mat3(0, -move, 0, 0, 0, 0, 0, 0, 0);
+    shifters[GLFW_KEY_1] = glm::mat3(0, 0, 0, scale, 0, 0, 0, 0, 0);
+    shifters[GLFW_KEY_3] = glm::mat3(0, 0, 0, 0, 0, 0, rotate, 0, 0);
+    shifters[GLFW_KEY_5] = glm::mat3(0, 0, 0, 0, 0, 0, 0, rotate, 0);
+    shifters[GLFW_KEY_7] = glm::mat3(0, 0, 0, 0, 0, 0, 0, 0, rotate);
+    shifters[GLFW_KEY_S] = - shifters[GLFW_KEY_W];
+    shifters[GLFW_KEY_D] = - shifters[GLFW_KEY_A];
+    shifters[GLFW_KEY_F] = - shifters[GLFW_KEY_R];
+    shifters[GLFW_KEY_2] = - shifters[GLFW_KEY_1];
+    shifters[GLFW_KEY_4] = - shifters[GLFW_KEY_3];
+    shifters[GLFW_KEY_6] = - shifters[GLFW_KEY_5];
+    shifters[GLFW_KEY_8] = - shifters[GLFW_KEY_7];
+
 }
 
 void Laborator4::FrameStart()
@@ -60,30 +65,28 @@ void Laborator4::Update(float deltaTimeSeconds)
 
 	modelMatrix = glm::mat4(1);
 	modelMatrix *= Transform3D::Translate(-2.5f, 0.5f,-1.5f);
-	modelMatrix *= Transform3D::Translate(translateX, translateY, translateZ);
+	modelMatrix *= Transform3D::Translate(keysAccumulator[0].x, keysAccumulator[0].y, keysAccumulator[0].z);
 	RenderMesh(meshes["box"], shaders["VertexNormal"], modelMatrix);
 
 	modelMatrix = glm::mat4(1);
 	modelMatrix *= Transform3D::Translate(0.0f, 0.5f, -1.5f);
-	modelMatrix *= Transform3D::Scale(scaleX, scaleY, scaleZ);
+	modelMatrix *= Transform3D::Scale(keysAccumulator[1].x, keysAccumulator[1].x, keysAccumulator[1].x);
 	RenderMesh(meshes["box"], shaders["Simple"], modelMatrix);
 
 	modelMatrix = glm::mat4(1);
 	modelMatrix *= Transform3D::Translate(2.5f, 0.5f, -1.5f);
-	modelMatrix *= Transform3D::RotateOX(angularStepOX);
-	modelMatrix *= Transform3D::RotateOY(angularStepOY);
-	modelMatrix *= Transform3D::RotateOZ(angularStepOZ);
+	modelMatrix *= Transform3D::RotateOX(keysAccumulator[2].x);
+	modelMatrix *= Transform3D::RotateOY(keysAccumulator[2].y);
+	modelMatrix *= Transform3D::RotateOZ(keysAccumulator[2].z);
 	RenderMesh(meshes["box"], shaders["VertexNormal"], modelMatrix);
 }
 
-void Laborator4::FrameEnd()
-{
+void Laborator4::FrameEnd() {
 	DrawCoordinatSystem();
 }
 
-void Laborator4::OnInputUpdate(float deltaTime, int mods)
-{
-	// TODO
+void Laborator4::OnInputUpdate(float deltaTime, int mods) {
+	keysAccumulator += deltaTime * std::accumulate(keys.begin(), keys.end(), glm::mat3(0), [&](const glm::mat3 & a, const int & b) { return a + shifters[b]; });
 }
 
 void Laborator4::OnKeyPress(int key, int mods)
@@ -104,11 +107,17 @@ void Laborator4::OnKeyPress(int key, int mods)
 			break;
 		}
 	}
+    if (shifters.find(key) != shifters.end()) {
+        keys.emplace_back(key);
+    }
+
 }
 
 void Laborator4::OnKeyRelease(int key, int mods)
 {
-	// add key release event
+    if (shifters.find(key) != shifters.end()) {
+        keys.erase(std::remove(keys.begin(), keys.end(), key), keys.end());
+    }
 }
 
 void Laborator4::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)

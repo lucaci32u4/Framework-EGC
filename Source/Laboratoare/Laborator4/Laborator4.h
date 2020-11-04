@@ -1,6 +1,8 @@
 #pragma once
 #include <Component/SimpleScene.h>
 
+#include <vector>
+
 class Laborator4 : public SimpleScene
 {
 	public:
@@ -10,6 +12,16 @@ class Laborator4 : public SimpleScene
 		void Init() override;
 
 	private:
+
+
+        std::unordered_map<int, glm::mat3> shifters;
+        std::vector<int> keys;
+        glm::mat3 keysAccumulator = glm::mat3(
+                0, 0, 0, // translate cube 1
+                1, 0, 0, // scale cube 2
+                0, 0, 0  // rotate cube 3
+                );
+
 		void FrameStart() override;
 		void Update(float deltaTimeSeconds) override;
 		void FrameEnd() override;
@@ -25,8 +37,5 @@ class Laborator4 : public SimpleScene
 
 	protected:
 		glm::mat4 modelMatrix;
-		float translateX, translateY, translateZ;
-		float scaleX, scaleY, scaleZ;
-		float angularStepOX, angularStepOY, angularStepOZ;
 		GLenum polygonMode;
 };
