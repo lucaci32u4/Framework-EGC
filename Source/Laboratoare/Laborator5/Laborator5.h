@@ -27,7 +27,10 @@ class Laborator5 : public SimpleScene
 		void OnWindowResize(int width, int height) override;
 
 	protected:
-		Laborator::Camera *camera;
-		glm::mat4 projectionMatrix;
-		bool renderCameraTarget;
+        Laborator::Camera *camera;
+        glm::mat4 projectionMatrix;
+        bool perspective = true;
+        float orthoWidht = 10;
+        float field = glm::quarter_pi<float>();
+        bool renderCameraTarget;
 };
