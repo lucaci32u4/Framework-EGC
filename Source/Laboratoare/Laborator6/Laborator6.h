@@ -12,6 +12,9 @@ class Laborator6 : public SimpleScene
 
 		Mesh * CreateMesh(const char * name, const std::vector<VertexFormat> &vertices, const std::vector<unsigned short> &indices);
 
+    private:
+        float time;
+
 	private:
 		void FrameStart() override;
 		void Update(float deltaTimeSeconds) override;

@@ -54,8 +54,12 @@ void Laborator6::Init()
 	// Create a shader program for drawing face polygon with the color of the normal
 	{
 		Shader *shader = new Shader("ShaderLab6");
-		shader->AddShader("Source/Laboratoare/Laborator6/Shaders/VertexShader.glsl", GL_VERTEX_SHADER);
-		shader->AddShader("Source/Laboratoare/Laborator6/Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
+
+		std::string prefix = "";
+		//prefix = "../";
+
+		shader->AddShader(prefix + "Source/Laboratoare/Laborator6/Shaders/VertexShader.glsl", GL_VERTEX_SHADER);
+		shader->AddShader(prefix + "Source/Laboratoare/Laborator6/Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
 		shader->CreateAndLink();
 		shaders[shader->GetName()] = shader;
 	}
@@ -132,6 +136,7 @@ void Laborator6::FrameStart()
 
 void Laborator6::Update(float deltaTimeSeconds)
 {
+    time += deltaTimeSeconds;
 	{
 		glm::mat4 modelMatrix = glm::mat4(1);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(0, 1, 0));
@@ -169,23 +174,34 @@ void Laborator6::RenderSimpleMesh(Mesh *mesh, Shader *shader, const glm::mat4 & 
 	// render an object using the specified shader and the specified position
 	glUseProgram(shader->program);
 
+	int location;
+
 	// TODO : get shader location for uniform mat4 "Model"
+    location = glGetUniformLocation(shader->program, "Model");
 
 	// TODO : set shader uniform "Model" to modelMatrix
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 	// TODO : get shader location for uniform mat4 "View"
+	location = glGetUniformLocation(shader->program, "View");
 
 	// TODO : set shader uniform "View" to viewMatrix
 	glm::mat4 viewMatrix = GetSceneCamera()->GetViewMatrix();
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
 	// TODO : get shader location for uniform mat4 "Projection"
+    location = glGetUniformLocation(shader->program, "Projection");
 
 	// TODO : set shader uniform "Projection" to projectionMatrix
 	glm::mat4 projectionMatrix = GetSceneCamera()->GetProjectionMatrix();
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
-	// Draw the object
+    location = glGetUniformLocation(shader->program, "time");
+    glUniform1f(location, time);
+
+    // Draw the object
 	glBindVertexArray(mesh->GetBuffers()->VAO);
-	glDrawElements(mesh->GetDrawMode(), static_cast<int>(mesh->indices.size()), GL_UNSIGNED_SHORT, 0);
+	glDrawElements(mesh->GetDrawMode(), static_cast<int>(mesh->indices.size()), GL_UNSIGNED_SHORT, nullptr);
 }
 
 // Documentation for the input functions can be found in: "/Source/Core/Window/InputController.h" or
